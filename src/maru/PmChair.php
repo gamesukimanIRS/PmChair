@@ -55,25 +55,19 @@ class PmChair extends PluginBase implements Listener {
 				}
 				if ($this->_microtime ( true ) - $this->doubleTap [$player->getName ()] < 0.5) {
 					
-					$addEntityPacket = new AddEntityPacket();
-					$addEntityPacket->entityRuntimeId = $this->onChair [$player->getName ()] = Entity::$entityCount ++;
-					$addEntityPacket->motion = new Vector3();
-					$addEntityPacket->position = $block->asVector3()->add(0.5, 1.5, 0.5);
-					$addEntityPacket->type = Item::NETWORK_ID;
-					
-					$setEntityLinkPacket = new SetEntityLinkPacket();
-					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, $player->getId(), 1, 0];
-					
-					foreach ( $this->getServer ()->getOnlinePlayers () as $target ) {
-						$target->dataPacket ( $addEntityPacket );
-						if ($player !== $target) {
-							$target->dataPacket ( $setEntityLinkPacket );
-						}
-					}
-				
-					$player->dataPacket ( $setEntityLinkPacket );
-					$player->setDataProperty(57, Entity::DATA_TYPE_VECTOR3F, [-0.02, 2.3, 0.19]);
-					unset($this->doubleTap[$player->getName()]);
+					$pk = new AddEntityPacket();
+					$pk->entityRuntimeId = $this->player->getId() + 10000;
+					$pk->type = 84;
+					$pk->position = new Vector3($this->player->x,$this->player->y+0.5,$this->player->z);
+					$pk->motion = new Vector3(0,0,0);
+					$flags = (
+						(1 << Entity::DATA_FLAG_IMMOBILE) |
+					(1 << Entity::DATA_FLAG_INVISIBLE)
+ 					);
+ 					$pk->metadata = [
+ 						Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
+ 					];
+ 					$pk->links[] = [$pk->entityRuntimeId,$this->player->getId(),Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk);
 				} else {
 					$this->doubleTap [$player->getName ()] = $this->_microtime ();
 					$player->sendPopup ( TextFormat::RED . $this->get("touch-popup") );
