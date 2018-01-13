@@ -62,7 +62,7 @@ class PmChair extends PluginBase implements Listener {
 					$addEntityPacket->type = Item::NETWORK_ID;
 					
 					$setEntityLinkPacket = new SetEntityLinkPacket();
-					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, $player->getId()];
+					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, $player->getId(), ord("true")];
 					
 					foreach ( $this->getServer ()->getOnlinePlayers () as $target ) {
 						$target->dataPacket ( $addEntityPacket );
@@ -71,7 +71,7 @@ class PmChair extends PluginBase implements Listener {
 						}
 					}
 					
-					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, 0];
+					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, 0, ord("true")];
 					$player->dataPacket ( $setEntityLinkPacket );
 					unset($this->doubleTap[$player->getName()]);
 				} else {
