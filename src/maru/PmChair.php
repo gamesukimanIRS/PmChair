@@ -114,4 +114,3 @@ class PmChair extends PluginBase implements Listener {
 		unset ( $this->onChair [$player->getName ()] );
 	}
 }
-?>
