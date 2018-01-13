@@ -72,7 +72,7 @@ class PmChair extends PluginBase implements Listener {
 					}
 				
 					$player->dataPacket ( $setEntityLinkPacket );
-					$player->setMotion(new Vector3(0, 0.2, 0));
+					$player->setDataProperty(Entity::DATA_TYPE_VECTOR3F, Entity::DATA_RIDE_POSITION, [-0.02, 2.3, 0.19]);
 					unset($this->doubleTap[$player->getName()]);
 				} else {
 					$this->doubleTap [$player->getName ()] = $this->_microtime ();
