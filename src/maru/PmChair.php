@@ -62,7 +62,7 @@ class PmChair extends PluginBase implements Listener {
 					$addEntityPacket->type = Item::NETWORK_ID;
 					
 					$setEntityLinkPacket = new SetEntityLinkPacket();
-					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, $player->getId(), true];
+					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, $player->getId()];
 					
 					foreach ( $this->getServer ()->getOnlinePlayers () as $target ) {
 						$target->dataPacket ( $addEntityPacket );
