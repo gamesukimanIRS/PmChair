@@ -22,6 +22,7 @@ class PmChair extends PluginBase implements Listener {
 	private $onChair = [ ];
 	private $doubleTap = [ ];
 	private $messages;
+	private $player;
 	
 	const m_version = 1;
 	
@@ -55,6 +56,7 @@ class PmChair extends PluginBase implements Listener {
 				}
 				if ($this->_microtime ( true ) - $this->doubleTap [$player->getName ()] < 0.5) {
 					
+					$this->player = $event->getPlayer();
 					$pk = new AddEntityPacket();
 					$pk->entityRuntimeId = $this->player->getId() + 10000;
 					$pk->type = 84;
