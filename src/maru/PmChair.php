@@ -17,6 +17,7 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\SetEntityLinkPacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
 use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
+use pocketmine\Server;
 
 class PmChair extends PluginBase implements Listener {
 	private $onChair = [ ];
