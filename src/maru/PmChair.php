@@ -67,7 +67,7 @@ class PmChair extends PluginBase implements Listener {
  					$pk->metadata = [
  						Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
  					];
- 					$pk->links[] = [$pk->entityRuntimeId,$this->player->getId(),Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk);
+ 					$pk->links[] = [$pk->entityRuntimeId,$this->player->getId(),Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk)];
 				} else {
 					$this->doubleTap [$player->getName ()] = $this->_microtime ();
 					$player->sendPopup ( TextFormat::RED . $this->get("touch-popup") );
