@@ -48,44 +48,48 @@ class PmChair extends PluginBase implements Listener {
 	public function onTouch(PlayerInteractEvent $event) {
 		$player = $event->getPlayer ();
 		$block = $event->getBlock ();
-		if (! isset ( $this->onChair [$player->getName ()] )) {
-			if ($block instanceof Stair) {
-				if (! isset ( $this->doubleTap [$player->getName ()] )) {
-					$this->doubleTap [$player->getName ()] = $this->_microtime ();
-					$player->sendPopup ( TextFormat::RED . $this->get("touch-popup"));
-					return;
-				}
-				if ($this->_microtime ( true ) - $this->doubleTap [$player->getName ()] < 0.5) {
-					
-					$this->player = $event->getPlayer();
-					$pk = new AddEntityPacket();
-					$pk->entityRuntimeId = $this->player->getId() + 10000;
-					$pk->type = 84;
-					$pk->position = new Vector3($this->player->x,$this->player->y+0.5,$this->player->z);
-					$pk->motion = new Vector3(0,0,0);
-					$flags = (
-						(1 << Entity::DATA_FLAG_IMMOBILE) |
-					(1 << Entity::DATA_FLAG_INVISIBLE)
- 					);
- 					$pk->metadata = [
- 						Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
- 					];
- 					$pk->links[] = [$pk->entityRuntimeId,$this->player->getId(),Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk)];
+		if ($block instanceof Stair) {
+			if(!isset($this->onChair[$player->getName()])){
+				if (isset($this->doubleTap[$player->getName()])) {
+					$this->SeatDown($player, $block);
+					unset($this->doubleTap[$player->getName()]);
 				} else {
-					$this->doubleTap [$player->getName ()] = $this->_microtime ();
-					$player->sendPopup ( TextFormat::RED . $this->get("touch-popup") );
-					return;
+					$this->doubleTap [$player->getName ()] = "1stTapComplete";
+					$player->sendPopup ( TextFormat::RED . $this->get("touch-popup"));
+					
 				}
+			}else{
+				$this->StandUp($player);
+				unset ( $this->onChair [$player->getName ()] );
 			}
-		} else {
-			$removeEntityPacket = new RemoveEntityPacket ();
-			$removeEntityPacket->entityUniqueId = $this->onChair [$player->getName ()];
-			$this->getServer ()->broadcastPacket ( $this->getServer ()->getOnlinePlayers (), $removeEntityPacket );
-			unset ( $this->onChair [$player->getName ()] );
 		}
 	}
-	public function _microtime () { 
-		return array_sum(explode(' ',microtime()));
+	public function SeatDown($player, $stair){
+		$sx = intval($stair->getX());
+		$sy = intval($stair->getY());
+		$sz = intval($stair->getZ());
+		$nx = $sx + 0.5;
+		$ny = $sy + 1.5;
+		$nz = $sz + 0.5;
+		$pk = new AddEntityPacket();
+		$entityRuntimeId = $player->getId() + 10000;
+		$this->onChair[$player->getName()] = $entityRuntimeId;
+		$pk->entityRuntimeId = $entityRuntimeId;
+		$pk->type = 84;
+		$pk->position = new Vector3($nx, $ny, $nz);
+		$pk->motion = new Vector3(0,0,0);
+		$flags = (
+			(1 << Entity::DATA_FLAG_IMMOBILE) | (1 << Entity::DATA_FLAG_INVISIBLE)
+ 		);
+ 		$pk->metadata = [
+ 			Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
+ 		];
+ 		$pk->links[] = [$pk->entityRuntimeId,$this->player->getId(),Server::getInstance()->broadcastPacket(Server::getInstance()->getOnlinePlayers(), $pk)];
+	}
+	public function StandUp($player){
+		$removepk = new RemoveEntityPacket();
+		$removepk->entityUniqueId = $this->onChair [$player->getName ()];
+		Server::getInstance()->broadcastPacket ( Server::getInstance()->getOnlinePlayers (), $removepk );
 	}
 	public function onJump(DataPacketReceiveEvent $event) {
 		$packet = $event->getPacket ();
@@ -94,9 +98,7 @@ class PmChair extends PluginBase implements Listener {
 		}
 		$player = $event->getPlayer ();
 		if ($packet->action === PlayerActionPacket::ACTION_JUMP && isset ( $this->onChair [$player->getName ()] )) {
-			$removepk = new RemoveEntityPacket();
-			$removepk->entityUniqueId = $this->onChair [$player->getName ()];
-			$this->getServer ()->broadcastPacket ( $this->getServer ()->getOnlinePlayers (), $removepk );
+			$this->StandUp($player);
 			unset ( $this->onChair [$player->getName ()] );
 		}
 	}
