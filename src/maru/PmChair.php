@@ -57,7 +57,7 @@ class PmChair extends PluginBase implements Listener {
 					
 					$addEntityPacket = new AddEntityPacket();
 					$addEntityPacket->entityRuntimeId = $this->onChair [$player->getName ()] = Entity::$entityCount ++;
-					$addEntityPacket->motion = new Vector3(0, 0.2, 0);
+					$addEntityPacket->motion = new Vector3();
 					$addEntityPacket->position = $block->asVector3()->add(0.5, 1.5, 0.5);
 					$addEntityPacket->type = Item::NETWORK_ID;
 					
@@ -72,6 +72,7 @@ class PmChair extends PluginBase implements Listener {
 					}
 				
 					$player->dataPacket ( $setEntityLinkPacket );
+					$player->setMotion(new Vector3(0, 0.2, 0));
 					unset($this->doubleTap[$player->getName()]);
 				} else {
 					$this->doubleTap [$player->getName ()] = $this->_microtime ();
