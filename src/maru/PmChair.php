@@ -71,7 +71,7 @@ class PmChair extends PluginBase implements Listener {
 						}
 					}
 					
-					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, 0, true];
+					$setEntityLinkPacket->link = [$addEntityPacket->entityRuntimeId, 0];
 					$player->dataPacket ( $setEntityLinkPacket );
 					unset($this->doubleTap[$player->getName()]);
 				} else {
